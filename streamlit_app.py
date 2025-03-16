@@ -4,6 +4,7 @@ import base64
 import os
 from google import genai
 from google.genai import types
+import fitz  # PyMuPDF
 
 # Initialize Google GenAI Client
 def generate_with_google_genai(uploaded_file):
@@ -51,8 +52,8 @@ def generate_with_google_genai(uploaded_file):
 def generate_with_openai(uploaded_file, question):
     client = OpenAI(api_key="sk-...DyQA")
 
-    # Read document content from the uploaded file
-    document = uploaded_file.read().decode()
+    # Extract text from the uploaded PDF file
+    document = extract_text_from_pdf(uploaded_file)
 
     # Create the conversation prompt for OpenAI
     messages = [
