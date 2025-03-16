@@ -1,3 +1,4 @@
+pip install pdfminer.six
 import streamlit as st
 from openai import OpenAI
 
