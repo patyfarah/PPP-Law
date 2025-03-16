@@ -1,8 +1,10 @@
 import streamlit as st
 from openai import OpenAI
+
+import base64
+import os
 from google import genai
 from google.genai import types
-import os
 
 # Initialize Google GenAI Client
 def generate_with_google_genai(uploaded_file):
