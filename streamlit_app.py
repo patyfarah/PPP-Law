@@ -1,7 +1,5 @@
-pip install pdfminer.six
 import streamlit as st
 from openai import OpenAI
-
 import PyPDF2
 
 def extract_text_from_pdf(pdf_path):
@@ -56,7 +54,7 @@ if uploaded_file and question:
     messages = [
         {
             "role": "user",
-            "content": f"Here's a document: {text} \n\n---\n\n {question}",
+            "content": f"Here's a document: {document} \n\n---\n\n {question}",
         }
     ]
     
