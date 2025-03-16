@@ -33,7 +33,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-def generate():
+def generate_with_google_genai(uploaded_file):
     client = genai.Client(
         api_key=os.environ.get("AIzaSyCuRhWVr4-SJ8APQyIvcKDtmA_Cww3pH9M"),
     )
