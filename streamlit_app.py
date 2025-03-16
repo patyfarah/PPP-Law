@@ -39,7 +39,7 @@ def generate_with_google_genai(uploaded_file):
     )
 
     files = [uploaded_file]
-   model = "gemini-2.0-flash"
+    model = "gemini-2.0-flash"
     contents = [
         types.Content(
             role="user",
