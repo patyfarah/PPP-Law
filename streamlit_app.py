@@ -6,6 +6,10 @@ from google import genai
 from google.genai import types
 import fitz  # PyMuPDF
 
+from dotenv import load_dotenv
+
+load_dotenv() 
+
 def generate_with_google_genai(uploaded_file):
 
     # Access the API key from the environment variable
