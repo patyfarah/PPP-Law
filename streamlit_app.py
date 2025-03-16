@@ -6,79 +6,53 @@ from google import genai
 from google.genai import types
 import fitz  # PyMuPDF
 
-from dotenv import load_dotenv
 
-load_dotenv() 
+import streamlit as st
+from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores import FAISS
+from langchain.embeddings.google import GoogleGenerativeAIEmbeddings
+from langchain.chains import RetrievalQA
+from langchain.llms import GoogleGenerativeAI
+import os
 
-def generate_with_google_genai(uploaded_file):
+# Set Gemini API Key (Replace with your own key or use environment variables)
+# Access the API key from the environment variable
+api_key = os.getenv("API_KEY")
+os.environ['GOOGLE_API_KEY'] = api_key
+# Load and Process PDFs
+def load_and_chunk_pdfs(pdf_paths):
+    docs = []
+    for pdf_path in pdf_paths:
+        loader = PyPDFLoader(pdf_path)
+        documents = loader.load()
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+        chunks = text_splitter.split_documents(documents)
+        docs.extend(chunks)
+    return docs
 
-    # Access the API key from the environment variable
-    api_key = os.getenv("API_KEY")
+# Initialize FAISS Vector Store
+def create_vector_store(docs):
+    embeddings = GoogleGenerativeAIEmbeddings()
+    vector_store = FAISS.from_documents(docs, embeddings)
+    return vector_store
 
-    # Use the API key in your client
-    client = genai.Client(api_key=api_key)
+# Load PDFs (Preloaded Files)
+pdf_files = ["example1.pdf", "example2.pdf"]  # Replace with actual file paths
+docs = load_and_chunk_pdfs(pdf_files)
+vector_store = create_vector_store(docs)
+retriever = vector_store.as_retriever()
+qa_chain = RetrievalQA.from_chain_type(llm=GoogleGenerativeAI(), retriever=retriever)
 
-    uploaded_file = client.files.upload(file=uploaded_file)
-    if not uploaded_file or not hasattr(uploaded_file, "uri"):
-        st.error("File upload failed. Please check your Google AI setup.")
-        return None
-        
-    model = "gemini-2.0-flash"
-    contents = [
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_uri(
-                    file_uri=uploaded_file[0].uri,
-                    mime_type=uploaded_file[0].mime_type,
-                ),
-                types.Part.from_text(text="""INSERT_INPUT_HERE"""),
-            ],
-        ),
-    ]
-    generate_content_config = types.GenerateContentConfig(
-        temperature=1,
-        top_p=0.95,
-        top_k=40,
-        max_output_tokens=8192,
-        response_mime_type="text/plain",
-        system_instruction=[
-            types.Part.from_text(text="""answer from uploaded document"""),
-        ],
-    )
+# Streamlit UI
+st.title("PDF-based Q&A Chatbot")
+st.write("Ask questions based on preloaded PDFs")
 
-    for chunk in client.models.generate_content_stream(
-        model=model,
-        contents=contents,
-        config=generate_content_config,
-    ):
-        print(chunk.text, end="")
-def main():
-    st.title("Public Procurement Purchasing Law")
-    st.write("Assistant for PPP - Law!")
-
-    # File upload by user
-    uploaded_file = st.file_uploader("Upload a Document (PDF)", type="pdf")
-    if uploaded_file:
-        question = st.text_input("Enter your question regarding the document:")
-
-        if question:
-            st.subheader("Generating Response...")
-            
-            # Choose method (Google GenAI or OpenAI)
-            method = st.selectbox("Choose an API for processing:", ["Google GenAI"])
-            
-            if method == "Google GenAI":
-                result = generate_with_google_genai(uploaded_file)
-                st.write("Google GenAI Response: ", result)
-            
-            elif method == "OpenAI":
-                response_stream = generate_with_openai(uploaded_file, question)
-                for chunk in response_stream:
-                    st.write(chunk['choices'][0]['message']['content'])
-
-if __name__ == "__main__":
-    main()
+user_query = st.text_input("Enter your question:")
+if user_query:
+    response = qa_chain.run(user_query)
+    st.write("### Response:")
+    st.write(response)
 
 
 
