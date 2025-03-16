@@ -86,7 +86,7 @@ def main():
             st.subheader("Generating Response...")
             
             # Choose method (Google GenAI or OpenAI)
-            method = st.selectbox("Choose an API for processing:", ["Google GenAI", "OpenAI"])
+            method = st.selectbox("Choose an API for processing:", ["Google GenAI"])
             
             if method == "Google GenAI":
                 result = generate_with_google_genai(uploaded_file)
