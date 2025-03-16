@@ -7,9 +7,12 @@ from google.genai import types
 import fitz  # PyMuPDF
 
 def generate_with_google_genai(uploaded_file):
-    client = genai.Client(
-        api_key=os.environ.get("AIzaSyCuRhWVr4-SJ8APQyIvcKDtmA_Cww3pH9M"),
-    )
+
+    # Access the API key from the environment variable
+    api_key = os.getenv("API_KEY")
+
+    # Use the API key in your client
+    client = genai.Client(api_key=api_key)
 
     files = [uploaded_file]
     model = "gemini-2.0-flash"
