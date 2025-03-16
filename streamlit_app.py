@@ -6,6 +6,55 @@ from google import genai
 from google.genai import types
 import fitz  # PyMuPDF
 
+import base64
+import os
+from google import genai
+from google.genai import types
+
+
+def generate():
+    client = genai.Client(
+        api_key=os.environ.get("AIzaSyCuRhWVr4-SJ8APQyIvcKDtmA_Cww3pH9M"),
+    )
+
+    files = [
+        # Make the file available in local system working directory
+        client.files.upload(file=uploaded_file),
+    ]
+    model = "gemini-2.0-flash"
+    contents = [
+        types.Content(
+            role="user",
+            parts=[
+                types.Part.from_uri(
+                    file_uri=files[0].uri,
+                    mime_type=files[0].mime_type,
+                ),
+                types.Part.from_text(text="""INSERT_INPUT_HERE"""),
+            ],
+        ),
+    ]
+    generate_content_config = types.GenerateContentConfig(
+        temperature=1,
+        top_p=0.95,
+        top_k=40,
+        max_output_tokens=8192,
+        response_mime_type="text/plain",
+        system_instruction=[
+            types.Part.from_text(text="""answer from uploaded document"""),
+        ],
+    )
+
+    for chunk in client.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=generate_content_config,
+    ):
+        print(chunk.text, end="")
+
+if __name__ == "__main__":
+    generate()
+
 
 def main():
     st.title("Public Procurement Purchasing Law")
