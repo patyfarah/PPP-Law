@@ -1,31 +1,5 @@
 import streamlit as st
 from openai import OpenAI
-import PyPDF2
-
-def extract_text_from_pdf(pdf_path):
-    """
-    Extracts text from a PDF file.
-
-    Args:
-        pdf_path (str): The path to the PDF file.
-
-    Returns:
-        str: The extracted text.
-    """
-    text = ""
-    try:
-        with open(pdf_path, 'rb') as file:  # 'rb' for read binary
-            reader = PyPDF2.PdfReader(file)  # Updated for PyPDF2 3.0+
-
-            for page_num in range(len(reader.pages)):  # Corrected attribute
-                page = reader.pages[page_num]         # Access pages using index
-                text += page.extract_text()
-    except FileNotFoundError:
-        return "Error: File not found."
-    except Exception as e:
-        return f"Error: An error occurred: {e}"
-
-    return text
 
 # Show title and description.
 st.title("Public Procurement Purchasing Law")
