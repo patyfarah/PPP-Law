@@ -1,6 +1,5 @@
 import streamlit as st
 from openai import OpenAI
-
 import base64
 import os
 from google import genai
