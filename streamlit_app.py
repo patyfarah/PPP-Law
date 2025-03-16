@@ -6,6 +6,20 @@ from google import genai
 from google.genai import types
 import fitz  # PyMuPDF
 
+
+# Function to extract text from PDF
+def extract_text_from_pdf(uploaded_file):
+    # Open the uploaded PDF file
+    pdf_document = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+    text = ""
+    
+    # Iterate through all the pages and extract text
+    for page_num in range(pdf_document.page_count):
+        page = pdf_document.load_page(page_num)  # Load each page
+        text += page.get_text()  # Extract text from the page
+    
+    return text
+
 # Initialize Google GenAI Client
 def generate_with_google_genai(uploaded_file):
     client = genai.Client(
