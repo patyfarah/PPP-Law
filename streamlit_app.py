@@ -18,7 +18,7 @@ def generate_with_google_genai(uploaded_file):
     # Use the API key in your client
     client = genai.Client(api_key=api_key)
 
-
+    uploaded_file = client.files.upload(file=uploaded_file)
     if not uploaded_file or not hasattr(uploaded_file, "uri"):
         st.error("File upload failed. Please check your Google AI setup.")
         return None
