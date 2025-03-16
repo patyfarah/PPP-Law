@@ -20,7 +20,7 @@ def main():
             st.subheader("Generating Response...")
             
             # Choose method (Google GenAI or OpenAI)
-            method = st.selectbox("Choose an API for processing:", ["Google GenAI", "OpenAI"])
+            method = st.selectbox("Choose an API for processing:", ["Google GenAI"])
             
             if method == "Google GenAI":
                 result = generate_with_google_genai(uploaded_file)
@@ -38,11 +38,8 @@ def generate_with_google_genai(uploaded_file):
         api_key=os.environ.get("AIzaSyCuRhWVr4-SJ8APQyIvcKDtmA_Cww3pH9M"),
     )
 
-    files = [
-        # Make the file available in local system working directory
-        client.files.upload(file=uploaded_file),
-    ]
-    model = "gemini-2.0-flash"
+    files = [uploaded_file]
+   model = "gemini-2.0-flash"
     contents = [
         types.Content(
             role="user",
